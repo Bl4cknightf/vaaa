@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portafolio Digital Estudiantil</title>
+
+  <!-- Fuentes de Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+  <!-- Íconos Phosphor -->
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+
+  <!-- Supabase: debe cargarse antes que script.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Hoja de estilos -->
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+  <!-- Cursor personalizado (solo computadora) -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+
+  <!-- ============================================================
+       PANTALLA DE CARGA
+  ============================================================ -->
+  <div class="splash" id="splash">
+    <div class="splash-inner">
+      <span class="splash-letter" style="--i:0">P</span>
+      <span class="splash-letter" style="--i:1">O</span>
+      <span class="splash-letter" style="--i:2">R</span>
+      <span class="splash-letter" style="--i:3">T</span>
+      <span class="splash-letter" style="--i:4">A</span>
+      <span class="splash-letter" style="--i:5">F</span>
+      <span class="splash-letter" style="--i:6">O</span>
+      <span class="splash-letter" style="--i:7">L</span>
+      <span class="splash-letter" style="--i:8">I</span>
+      <span class="splash-letter" style="--i:9">O</span>
+    </div>
+    <p class="splash-sub">Digital Estudiantil</p>
+  </div>
+
+  <!-- ============================================================
+       MENÚ LATERAL
+  ============================================================ -->
+  <nav class="sidenav" id="sidenav">
+    <div class="nav-logo">PD</div>
+    <ul class="nav-links">
+      <li><a href="#hero"         class="nav-link active" data-label="Inicio"><i class="ph-bold ph-house-simple"></i></a></li>
+      <li><a href="#presentacion" class="nav-link"        data-label="Presentación"><i class="ph-bold ph-user-circle"></i></a></li>
+      <li><a href="#actividades"  class="nav-link"        data-label="Actividades"><i class="ph-bold ph-books"></i></a></li>
+      <li><a href="#proyectos"    class="nav-link"        data-label="Proyectos"><i class="ph-bold ph-rocket-launch"></i></a></li>
+      <li><a href="#evaluaciones" class="nav-link"        data-label="Evaluaciones"><i class="ph-bold ph-chart-bar"></i></a></li>
+      <li><a href="#reflexiones"  class="nav-link"        data-label="Reflexiones"><i class="ph-bold ph-chat-dots"></i></a></li>
+      <li><a href="#rubrica"      class="nav-link"        data-label="Rúbrica"><i class="ph-bold ph-clipboard-text"></i></a></li>
+      <li><a href="#contacto"     class="nav-link"        data-label="Contacto"><i class="ph-bold ph-envelope-simple"></i></a></li>
+    </ul>
+
+    <!-- Barra de progreso de scroll -->
+    <div class="nav-progress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- ── BOTÓN DE SESIÓN en la parte inferior del menú lateral ──
+         Muestra un círculo con ícono de usuario.
+         Si eres invitado: abre el modal de login.
+         Si eres admin: muestra opciones de cerrar sesión. -->
+    <div class="nav-auth" id="navAuth">
+      <button class="auth-circle" id="authCircleBtn" title="Iniciar sesión como administrador">
+        <i class="ph-bold ph-user" id="authCircleIcon"></i>
+      </button>
+      <!-- Pequeño punto de estado: gris=invitado, dorado=admin -->
+      <div class="auth-status-dot" id="authStatusDot"></div>
+    </div>
+  </nav>
+
+  <!-- Botón hamburguesa para celular -->
+  <button class="hamburger" id="hamburger" aria-label="Abrir menú">
+    <i class="ph-bold ph-list"></i>
+  </button>
+
+  <!-- Fondo oscuro detrás del menú en celular -->
+  <div class="nav-backdrop" id="navBackdrop"></div>
+
+  <!-- ============================================================
+       CONTENIDO PRINCIPAL
+  ============================================================ -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ─── SECCIÓN 1: INICIO ─── -->
+    <section class="section hero-section" id="hero">
+      <div class="particles" id="particles"></div>
+
+      <div class="hero-content reveal">
+        <span class="hero-badge">📂 Año Académico 2025</span>
+        <h1 class="hero-title">
+          Portafolio<br/>
+          <span class="hero-accent">Digital</span>
+        </h1>
+        <p class="hero-subtitle">
+          Un espacio para reflexionar, crecer y documentar el viaje del aprendizaje.
+        </p>
+
+        <!-- Etiquetas de datos del estudiante -->
+        <div class="hero-meta">
+          <div class="meta-chip" id="metaNombre"><i class="ph-bold ph-user"></i> Nombre del Estudiante</div>
+          <div class="meta-chip" id="metaAsignatura"><i class="ph-bold ph-book-open"></i> Asignatura</div>
+          <div class="meta-chip" id="metaFecha"><i class="ph-bold ph-calendar"></i> Fecha de Inicio</div>
+        </div>
+
+        <!-- Este botón solo lo ve el admin -->
+        <button class="btn-primary admin-only" id="btnConfig" style="display:none">
+          <i class="ph-bold ph-pencil-simple"></i> Configurar Portafolio
+        </button>
+
+        <!-- Etiqueta de modo que ve el invitado -->
+        <div class="guest-badge" id="guestBadge">
+          <i class="ph-bold ph-eye"></i> Modo visitante — Solo lectura
+        </div>
+      </div>
+
+      <!-- Estadísticas animadas -->
+      <div class="hero-stats reveal">
+        <div class="stat-card float-1">
+          <span class="stat-number" id="statActividades">0</span>
+          <span class="stat-label">Actividades</span>
+        </div>
+        <div class="stat-card float-2">
+          <span class="stat-number" id="statProyectos">0</span>
+          <span class="stat-label">Proyectos</span>
+        </div>
+        <div class="stat-card float-3">
+          <span class="stat-number" id="statReflexiones">0</span>
+          <span class="stat-label">Reflexiones</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECCIÓN 2: PRESENTACIÓN ─── -->
+    <section class="section" id="presentacion">
+      <div class="section-header reveal">
+        <span class="section-tag">01</span>
+        <h2 class="section-title">Presentación</h2>
+        <p class="section-desc">Conoce quién soy y mis expectativas para esta asignatura.</p>
+      </div>
+
+      <div class="presentacion-grid reveal">
+        <!-- Tarjeta de perfil -->
+        <div class="profile-card">
+          <div class="profile-avatar-wrap">
+            <!-- Admin puede hacer clic para cambiar foto; invitado no -->
+            <div class="profile-avatar" id="profileAvatar" title="Clic para cambiar la foto (solo admin)">
+              <span id="avatarInitials">?</span>
+              <div class="avatar-overlay admin-only-overlay">
+                <i class="ph-bold ph-camera"></i>
+                <span>Cambiar foto</span>
+              </div>
+            </div>
+            <input type="file" id="fotoInput" accept="image/*" style="display:none"/>
+          </div>
+
+          <h3 id="profileNombre">Nombre del Estudiante</h3>
+          <p id="profileMatricula" class="profile-matricula">
+            <i class="ph-bold ph-identification-card"></i> Matrícula: —
+          </p>
+          <p id="profileAsignatura" class="profile-sub">Asignatura</p>
+
+          <div class="profile-badges">
+            <span class="badge"><i class="ph-bold ph-graduation-cap"></i> Estudiante</span>
+            <span class="badge"><i class="ph-bold ph-books"></i> Aprendiz</span>
+          </div>
+        </div>
+
+        <!-- Textos editables (admin) / solo lectura (invitado) -->
+        <div class="presentacion-texto">
+          <h3>Sobre mí</h3>
+          <div class="editable-block" id="presentacionTexto"
+               data-placeholder="Escribe aquí una breve introducción sobre ti...">
+          </div>
+          <h3 style="margin-top:2rem">Objetivo del Portafolio</h3>
+          <div class="editable-block" id="objetivoTexto"
+               data-placeholder="Describe el objetivo general del portafolio...">
+          </div>
+        </div>
+      </div>
+
+      <!-- Beneficios -->
+      <div class="beneficios-grid reveal">
+        <div class="beneficio-card">
+          <span class="beneficio-icon"><i class="ph-bold ph-trend-up"></i></span>
+          <h4>Visibilidad del Progreso</h4>
+          <p>Tanto tú como el docente pueden visualizar el avance a lo largo del curso.</p>
+        </div>
+        <div class="beneficio-card">
+          <span class="beneficio-icon"><i class="ph-bold ph-brain"></i></span>
+          <h4>Fomento de la Autonomía</h4>
+          <p>Tomas un papel activo en tu propio aprendizaje y desarrollo.</p>
+        </div>
+        <div class="beneficio-card">
+          <span class="beneficio-icon"><i class="ph-bold ph-laptop"></i></span>
+          <h4>Habilidades Digitales</h4>
+          <p>Te familiarizas con herramientas tecnológicas útiles para el estudio.</p>
+        </div>
+        <div class="beneficio-card">
+          <span class="beneficio-icon"><i class="ph-bold ph-handshake"></i></span>
+          <h4>Mejora la Comunicación</h4>
+          <p>Facilita la comunicación y retroalimentación con el docente.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECCIÓN 3: ACTIVIDADES ─── -->
+    <section class="section" id="actividades">
+      <div class="section-header reveal">
+        <span class="section-tag">02</span>
+        <h2 class="section-title">Actividades y Evaluaciones</h2>
+        <p class="section-desc">Registro de tareas, trabajos y evaluaciones corregidas.</p>
+      </div>
+
+      <div class="actions-bar reveal">
+        <!-- Solo el admin ve este botón -->
+        <button class="btn-primary admin-only" id="btnAddActividad" style="display:none">
+          <i class="ph-bold ph-plus"></i> Agregar Actividad
+        </button>
+        <div class="filtros">
+          <button class="filtro-btn active" data-filter="all">Todas</button>
+          <button class="filtro-btn" data-filter="tarea">📝 Tareas</button>
+          <button class="filtro-btn" data-filter="evaluacion">📊 Evaluaciones</button>
+          <button class="filtro-btn" data-filter="proyecto">🚀 Proyectos</button>
+        </div>
+      </div>
+
+      <div class="actividades-grid reveal" id="actividadesGrid">
+        <div class="empty-state" id="emptyActividades">
+          <i class="ph-bold ph-folder-open"></i>
+          <p>No hay actividades aún.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECCIÓN 4: PROYECTOS ─── -->
+    <section class="section" id="proyectos">
+      <div class="section-header reveal">
+        <span class="section-tag">03</span>
+        <h2 class="section-title">Proyectos</h2>
+        <p class="section-desc">Proyectos desarrollados, sus fases y resultados obtenidos.</p>
+      </div>
+
+      <div class="actions-bar reveal">
+        <button class="btn-primary admin-only" id="btnAddProyecto" style="display:none">
+          <i class="ph-bold ph-plus"></i> Agregar Proyecto
+        </button>
+      </div>
+
+      <div class="proyectos-grid reveal" id="proyectosGrid">
+        <div class="empty-state" id="emptyProyectos">
+          <i class="ph-bold ph-rocket-launch"></i>
+          <p>No hay proyectos aún.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECCIÓN 5: PROGRESO ─── -->
+    <section class="section" id="evaluaciones">
+      <div class="section-header reveal">
+        <span class="section-tag">04</span>
+        <h2 class="section-title">Mi Progreso</h2>
+        <p class="section-desc">Visualización del avance académico a lo largo del curso.</p>
+      </div>
+
+      <div class="progreso-layout reveal">
+        <div class="grafico-card">
+          <h3>Calificaciones por Actividad</h3>
+          <div class="grafico-bars" id="graficoBars">
+            <div class="grafico-empty">Agrega actividades con calificación para ver el gráfico</div>
+          </div>
+        </div>
+        <div class="promedio-card">
+          <h3>Promedio General</h3>
+          <div class="promedio-circle">
+            <svg viewBox="0 0 120 120" class="progress-ring">
+              <circle class="ring-bg"   cx="60" cy="60" r="52"/>
+              <circle class="ring-fill" cx="60" cy="60" r="52" id="ringFill"/>
+            </svg>
+            <span class="promedio-valor" id="promedioValor">—</span>
+          </div>
+          <p class="promedio-label" id="promedioLabel">Sin calificaciones</p>
+        </div>
+      </div>
+
+      <div class="evaluacion-tipos reveal">
+        <div class="eval-tipo">
+          <div class="eval-icon"><i class="ph-bold ph-mirror"></i></div>
+          <h4>Autoevaluación</h4>
+          <p>El estudiante realiza una autoevaluación periódica de su portafolio.</p>
+        </div>
+        <div class="eval-tipo">
+          <div class="eval-icon"><i class="ph-bold ph-users-three"></i></div>
+          <h4>Coevaluación</h4>
+          <p>Los estudiantes evalúan mutuamente el trabajo de sus compañeros.</p>
+        </div>
+        <div class="eval-tipo">
+          <div class="eval-icon"><i class="ph-bold ph-chalkboard-teacher"></i></div>
+          <h4>Heteroevaluación</h4>
+          <p>El docente evalúa el portafolio utilizando la rúbrica establecida.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECCIÓN 6: REFLEXIONES ─── -->
+    <section class="section" id="reflexiones">
+      <div class="section-header reveal">
+        <span class="section-tag">05</span>
+        <h2 class="section-title">Reflexiones</h2>
+        <p class="section-desc">Espacio para el pensamiento crítico y la introspección académica.</p>
+      </div>
+
+      <div class="actions-bar reveal">
+        <button class="btn-primary admin-only" id="btnAddReflexion" style="display:none">
+          <i class="ph-bold ph-plus"></i> Nueva Reflexión
+        </button>
+      </div>
+
+      <div class="reflexiones-finales reveal">
+        <h3>Reflexiones Finales del Curso</h3>
+        <div class="reflexion-campo">
+          <label><i class="ph-bold ph-push-pin"></i> Aprendizajes más significativos</label>
+          <div class="editable-block" id="refAprendizajes" data-placeholder="¿Qué aprendizajes te llevas de esta asignatura?..."></div>
+        </div>
+        <div class="reflexion-campo">
+          <label><i class="ph-bold ph-barbell"></i> Fortalezas identificadas</label>
+          <div class="editable-block" id="refFortalezas" data-placeholder="¿En qué aspectos te destacas?..."></div>
+        </div>
+        <div class="reflexion-campo">
+          <label><i class="ph-bold ph-wrench"></i> Áreas a mejorar</label>
+          <div class="editable-block" id="refMejorar" data-placeholder="¿Qué aspectos puedes trabajar para crecer?..."></div>
+        </div>
+        <div class="reflexion-campo">
+          <label><i class="ph-bold ph-target"></i> Objetivos futuros</label>
+          <div class="editable-block" id="refObjetivos" data-placeholder="¿Cuáles son tus próximas metas académicas?..."></div>
+        </div>
+      </div>
+
+      <div class="reflexiones-grid reveal" id="reflexionesGrid">
+        <div class="empty-state" id="emptyReflexiones">
+          <i class="ph-bold ph-chat-dots"></i>
+          <p>No hay reflexiones registradas aún.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECCIÓN 7: RÚBRICA ─── -->
+    <section class="section" id="rubrica">
+      <div class="section-header reveal">
+        <span class="section-tag">06</span>
+        <h2 class="section-title">Rúbrica de Evaluación</h2>
+        <p class="section-desc" id="rubricaDesc">Criterios con los que será evaluado este portafolio.</p>
+      </div>
+
+      <div class="rubrica-wrapper reveal">
+        <table class="rubrica-tabla">
+          <thead>
+            <tr>
+              <th>Criterio</th>
+              <th class="hide-xs">Descripción</th>
+              <th>Peso</th>
+              <!-- Columna de editar solo aparece para el admin (JS la muestra/oculta) -->
+              <th class="admin-only col-editar" style="display:none">Editar</th>
+            </tr>
+          </thead>
+          <tbody id="rubricaBody"></tbody>
+        </table>
+        <div class="rubrica-total-row">
+          <span>Total acumulado:</span>
+          <strong id="rubricaTotal">100%</strong>
+          <span id="rubricaTotalMsg" class="rubrica-total-msg"></span>
+        </div>
+      </div>
+
+      <!-- Autoevaluación -->
+      <div class="autoevaluacion reveal">
+        <h3>Mi Autoevaluación</h3>
+        <p>Mueve los controles para calificarte del 1 al 10 en cada criterio:</p>
+        <div class="auto-sliders" id="autoSliders"></div>
+        <div class="auto-footer">
+          <div class="auto-total">
+            Puntaje estimado: <strong id="autoTotal">0</strong> / 100
+          </div>
+          <button class="btn-primary btn-enviar admin-only" id="btnEnviarAuto" style="display:none">
+            <i class="ph-bold ph-paper-plane-tilt"></i> Enviar Autoevaluación
+          </button>
+        </div>
+        <div class="auto-resultado" id="autoResultado" style="display:none">
+          <i class="ph-bold ph-check-circle"></i>
+          <div>
+            <strong>Autoevaluación enviada</strong>
+            <p id="autoResultadoTexto"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECCIÓN 8: CONTACTO ─── -->
+    <section class="section" id="contacto">
+      <div class="section-header reveal">
+        <span class="section-tag">07</span>
+        <h2 class="section-title">Contacto</h2>
+        <p class="section-desc">Información de contacto y comentarios del docente.</p>
+      </div>
+
+      <div class="contacto-grid reveal">
+        <div class="comentarios-card">
+          <h3><i class="ph-bold ph-chat-centered-dots"></i> Comentarios del Docente</h3>
+          <div class="comentarios-lista" id="comentariosLista">
+            <div class="empty-state">
+              <i class="ph-bold ph-chat-dots"></i>
+              <p>Sin comentarios aún.</p>
+            </div>
+          </div>
+          <!-- Formulario de comentario solo visible para el admin -->
+          <div class="comentario-form admin-only" id="comentarioForm" style="display:none">
+            <input type="text" id="inputComentario" placeholder="Escribe un comentario o retroalimentación..."/>
+            <button class="btn-primary" id="btnComentario">
+              <i class="ph-bold ph-paper-plane-tilt"></i> Enviar
+            </button>
+          </div>
+        </div>
+
+        <!-- Información de contacto -->
+        <div class="contacto-info-card">
+          <h3><i class="ph-bold ph-address-book"></i> Mi Información de Contacto</h3>
+          <div class="contacto-links">
+
+            <!-- CAMBIA AQUÍ: tu usuario de Instagram -->
+            <a class="contacto-item" href="https://www.instagram.com/TU_USUARIO_AQUI" target="_blank">
+              <div class="contacto-icon-wrap instagram"><i class="ph-bold ph-instagram-logo"></i></div>
+              <div class="contacto-item-info">
+                <strong>Instagram</strong>
+                <span>@TU_USUARIO_AQUI</span>  <!-- CAMBIA AQUÍ -->
+              </div>
+              <i class="ph-bold ph-arrow-square-out contacto-arrow"></i>
+            </a>
+
+            <!-- CAMBIA AQUÍ: tu número de WhatsApp -->
+            <a class="contacto-item" href="https://wa.me/1TUNUMEROAQUI" target="_blank">
+              <div class="contacto-icon-wrap whatsapp"><i class="ph-bold ph-whatsapp-logo"></i></div>
+              <div class="contacto-item-info">
+                <strong>WhatsApp / Teléfono</strong>
+                <span>+1 (000) 000-0000</span>  <!-- CAMBIA AQUÍ -->
+              </div>
+              <i class="ph-bold ph-arrow-square-out contacto-arrow"></i>
+            </a>
+
+            <!-- CAMBIA AQUÍ: tu correo electrónico -->
+            <a class="contacto-item" href="mailto:TUCORREO@gmail.com">
+              <div class="contacto-icon-wrap gmail"><i class="ph-bold ph-envelope-simple"></i></div>
+              <div class="contacto-item-info">
+                <strong>Correo Electrónico</strong>
+                <span>TUCORREO@gmail.com</span>  <!-- CAMBIA AQUÍ -->
+              </div>
+              <i class="ph-bold ph-arrow-square-out contacto-arrow"></i>
+            </a>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       MODAL: INICIO DE SESIÓN
+       Se abre al hacer clic en el círculo de usuario del menú
+  ============================================================ -->
+  <div class="modal-overlay" id="modalLogin">
+    <div class="modal modal-login">
+      <button class="modal-close" id="closeLogin">✕</button>
+
+      <!-- Cabecera del modal con ícono grande -->
+      <div class="login-header">
+        <div class="login-avatar">
+          <i class="ph-bold ph-lock-key"></i>
+        </div>
+        <h2>Acceso Administrador</h2>
+        <p>Ingresa tu matrícula y contraseña para acceder al modo de edición.</p>
+      </div>
+
+      <!-- Formulario de login -->
+      <div class="form-group">
+        <label><i class="ph-bold ph-identification-card"></i> Matrícula</label>
+        <input type="text" id="loginMatricula" placeholder="Ej.: 2026-1072" autocomplete="username"/>
+      </div>
+      <div class="form-group">
+        <label><i class="ph-bold ph-lock-simple"></i> Contraseña</label>
+        <!-- Campo de contraseña con botón para mostrar/ocultar -->
+        <div class="password-wrap">
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"/>
+          <button class="btn-toggle-pw" id="btnTogglePw" type="button" title="Mostrar/ocultar contraseña">
+            <i class="ph-bold ph-eye" id="eyeIcon"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mensaje de error (aparece si la contraseña es incorrecta) -->
+      <div class="login-error" id="loginError" style="display:none">
+        <i class="ph-bold ph-warning-circle"></i>
+        <span>Matrícula o contraseña incorrectas.</span>
+      </div>
+
+      <button class="btn-primary btn-login-submit" id="btnLoginSubmit">
+        <i class="ph-bold ph-sign-in"></i> Iniciar Sesión
+      </button>
+
+      <p class="login-note">
+        <i class="ph-bold ph-eye"></i>
+        Como visitante puedes ver todo el portafolio sin necesidad de iniciar sesión.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: MENÚ DEL ADMIN (aparece cuando ya está logueado)
+       Muestra quién está logueado y opción de cerrar sesión
+  ============================================================ -->
+  <div class="modal-overlay" id="modalAdminMenu">
+    <div class="modal modal-admin-menu">
+      <button class="modal-close" id="closeAdminMenu">✕</button>
+      <div class="admin-menu-header">
+        <div class="admin-menu-avatar">
+          <i class="ph-bold ph-shield-check"></i>
+        </div>
+        <h3>Sesión Activa</h3>
+        <p class="admin-menu-sub">Estás en modo administrador</p>
+        <div class="admin-menu-badge">
+          <i class="ph-bold ph-identification-card"></i>
+          <span id="adminMenuMatricula">2026-1072</span>
+        </div>
+      </div>
+      <button class="btn-logout" id="btnLogout">
+        <i class="ph-bold ph-sign-out"></i> Cerrar Sesión
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: CONFIGURAR PORTAFOLIO (solo admin)
+  ============================================================ -->
+  <div class="modal-overlay" id="modalConfig">
+    <div class="modal">
+      <button class="modal-close" id="closeConfig">✕</button>
+      <h2><i class="ph-bold ph-gear"></i> Configurar Portafolio</h2>
+      <p>Ingresa los datos del portafolio.</p>
+      <div class="form-group">
+        <label>Nombre completo</label>
+        <input type="text" id="inputNombre" placeholder="Ej.: María García López"/>
+      </div>
+      <div class="form-group">
+        <label>Matrícula del estudiante</label>
+        <input type="text" id="inputMatricula" placeholder="Ej.: 2026-1072"/>
+      </div>
+      <div class="form-group">
+        <label>Nombre de la asignatura</label>
+        <input type="text" id="inputAsignatura" placeholder="Ej.: Matemáticas I"/>
+      </div>
+      <div class="form-group">
+        <label>Fecha de inicio</label>
+        <input type="date" id="inputFecha"/>
+      </div>
+      <button class="btn-primary" id="btnGuardarConfig">
+        <i class="ph-bold ph-floppy-disk"></i> Guardar
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: AGREGAR ACTIVIDAD (solo admin)
+  ============================================================ -->
+  <div class="modal-overlay" id="modalActividad">
+    <div class="modal">
+      <button class="modal-close" id="closeActividad">✕</button>
+      <h2><i class="ph-bold ph-note-pencil"></i> Nueva Actividad</h2>
+      <div class="form-group">
+        <label>Nombre de la actividad</label>
+        <input type="text" id="actNombre" placeholder="Ej.: Tarea 1 – Introducción"/>
+      </div>
+      <div class="form-group">
+        <label>Tipo</label>
+        <select id="actTipo">
+          <option value="tarea">📝 Tarea</option>
+          <option value="evaluacion">📊 Evaluación</option>
+          <option value="proyecto">🚀 Proyecto</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Descripción</label>
+        <textarea id="actDescripcion" placeholder="Describe brevemente la actividad..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Fecha de entrega</label>
+        <input type="date" id="actFecha"/>
+      </div>
+      <div class="form-group">
+        <label>Calificación (0–10, opcional)</label>
+        <input type="number" id="actCalificacion" min="0" max="10" step="0.1" placeholder="Ej.: 8.5"/>
+      </div>
+      <div class="form-group">
+        <label>Reflexión personal</label>
+        <textarea id="actReflexion" placeholder="En esta actividad aprendí..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Enlace o archivo (URL)</label>
+        <input type="url" id="actEnlace" placeholder="https://..."/>
+      </div>
+      <button class="btn-primary" id="btnGuardarActividad">
+        <i class="ph-bold ph-floppy-disk"></i> Guardar Actividad
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: AGREGAR PROYECTO (solo admin)
+  ============================================================ -->
+  <div class="modal-overlay" id="modalProyecto">
+    <div class="modal">
+      <button class="modal-close" id="closeProyecto">✕</button>
+      <h2><i class="ph-bold ph-rocket-launch"></i> Nuevo Proyecto</h2>
+      <div class="form-group">
+        <label>Nombre del proyecto</label>
+        <input type="text" id="proyNombre" placeholder="Ej.: Proyecto Final – Análisis de Datos"/>
+      </div>
+      <div class="form-group">
+        <label>Descripción</label>
+        <textarea id="proyDescripcion" placeholder="Describe el objetivo y alcance..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Fases del proyecto</label>
+        <textarea id="proyFases" placeholder="1. Investigación&#10;2. Diseño&#10;3. Desarrollo"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Resultados obtenidos</label>
+        <textarea id="proyResultados" placeholder="Describe los resultados alcanzados..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Reflexión sobre el proceso</label>
+        <textarea id="proyReflexion" placeholder="¿Qué aprendiste?..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Calificación (0–10, opcional)</label>
+        <input type="number" id="proyCalificacion" min="0" max="10" step="0.1"/>
+      </div>
+      <button class="btn-primary" id="btnGuardarProyecto">
+        <i class="ph-bold ph-floppy-disk"></i> Guardar Proyecto
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: NUEVA REFLEXIÓN (solo admin)
+  ============================================================ -->
+  <div class="modal-overlay" id="modalReflexion">
+    <div class="modal">
+      <button class="modal-close" id="closeReflexion">✕</button>
+      <h2><i class="ph-bold ph-chat-dots"></i> Nueva Reflexión</h2>
+      <div class="form-group">
+        <label>Título</label>
+        <input type="text" id="refTitulo" placeholder="Ej.: Semana 3 – Mis avances"/>
+      </div>
+      <div class="form-group">
+        <label>Reflexión</label>
+        <textarea id="refContenido" rows="6" placeholder="En esta etapa aprendí..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Estado de ánimo</label>
+        <div class="emoji-picker" id="emojiPicker">
+          <button class="emoji-btn active" data-emoji="😊">😊</button>
+          <button class="emoji-btn" data-emoji="🤔">🤔</button>
+          <button class="emoji-btn" data-emoji="💪">💪</button>
+          <button class="emoji-btn" data-emoji="😅">😅</button>
+          <button class="emoji-btn" data-emoji="🎉">🎉</button>
+        </div>
+      </div>
+      <button class="btn-primary" id="btnGuardarReflexion">
+        <i class="ph-bold ph-floppy-disk"></i> Guardar Reflexión
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal de detalle de actividad/proyecto -->
+  <div class="modal-overlay" id="modalDetalle">
+    <div class="modal modal-wide">
+      <button class="modal-close" id="closeDetalle">✕</button>
+      <div id="detalleContent"></div>
+    </div>
+  </div>
+
+  <!-- Modal de editar criterio de rúbrica (solo admin) -->
+  <div class="modal-overlay" id="modalRubrica">
+    <div class="modal">
+      <button class="modal-close" id="closeRubrica">✕</button>
+      <h2><i class="ph-bold ph-clipboard-text"></i> Editar Criterio</h2>
+      <p>Modifica el nombre, descripción y porcentaje.</p>
+      <input type="hidden" id="rubricaEditIdx"/>
+      <div class="form-group">
+        <label>Nombre del criterio</label>
+        <input type="text" id="rubricaEditNombre"/>
+      </div>
+      <div class="form-group">
+        <label>Descripción</label>
+        <textarea id="rubricaEditDesc"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Porcentaje (%)</label>
+        <input type="number" id="rubricaEditPct" min="1" max="100" step="1"/>
+        <small style="color:#888;margin-top:.3rem;display:block">La suma de todos debe dar 100%.</small>
+      </div>
+      <button class="btn-primary" id="btnGuardarRubrica">
+        <i class="ph-bold ph-floppy-disk"></i> Guardar Cambio
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast de notificaciones -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Botón volver arriba -->
+  <button class="back-to-top" id="backToTop" aria-label="Volver arriba">
+    <i class="ph-bold ph-arrow-up"></i>
+  </button>
+
+  <!-- Script principal -->
+  <script src="script.js"></script>
+</body>
+</html>
+    <script  src="./script.js"></script>
+
+  </body>
+  
+</html>
